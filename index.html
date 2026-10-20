@@ -61,7 +61,7 @@ h3{margin:0 0 8px;font-size:15px}
 <p class="sub">Übersicht, Jobplanung, Ein- und Ausgaben und Equipment.</p>
 <div class="card" id="syncbar" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
   <span id="syncs" style="color:var(--mut);font-size:13px">Lädt …</span>
-  <span><button class="btn s hide" id="syncpick" onclick="odPick()">Datei wählen/erstellen</button><button class="btn s hide" id="syncexp" onclick="odExport()">Exportieren</button><button class="btn s hide" id="syncimp" onclick="$('syncfile').click()">Importieren</button><input type="file" id="syncfile" accept="application/json" class="hide" onchange="odImport(event)"></span>
+  <span><button class="btn s hide" id="syncpick" onclick="odPick()">Datei wählen/erstellen</button><button class="btn s hide" id="syncexp" onclick="odExport()">Exportieren</button><button class="btn s hide" id="syncimp" onclick="$('syncfile').click()">Importieren</button><input type="file" id="syncfile" class="hide" onchange="odImport(event)"></span>
 </div>
 <nav id="nav"></nav>
 
@@ -85,12 +85,11 @@ h3{margin:0 0 8px;font-size:15px}
     </div>
   </div>
 
-  <div class="grid" id="kpis"></div>
+  <div class="grid" id="kpis" style="margin-bottom:14px"></div>
 
   <div class="card"><b>Letzte 6 Monate</b>
-    <div style="font-size:12px;color:var(--mut)"><span class="pos">■</span> Einnahmen &nbsp; <span class="neg">■</span> Ausgaben &nbsp;·&nbsp; schraffiert = wiederkehrend (unten), voll = einmalig (oben) &nbsp;·&nbsp; Balken antippen springt zu den Details</div>
+    <div style="font-size:12px;color:var(--mut)"><span class="pos">■</span> Einnahmen &nbsp; <span class="neg">■</span> Ausgaben</div>
     <div class="bars" id="bars"></div></div>
-  <div class="card"><b>Ausgaben nach Kategorie</b><div id="cats" style="margin-top:8px"></div></div>
 </section>
 
 <section id="t1" class="hide">
@@ -136,8 +135,9 @@ h3{margin:0 0 8px;font-size:15px}
     </div>
     <div style="margin-top:10px"><button class="btn" id="fbtn" onclick="saveItem()">Hinzufügen</button> <button class="btn s hide" id="fcan" onclick="resetItem()">Abbrechen</button></div>
   </div>
-  <div class="card"><b>Einnahmen nach Kategorie</b><div id="icats" style="margin-top:8px"></div></div>
   <div id="list"></div>
+  <div class="card"><b>Einnahmen nach Kategorie</b><div id="icats" style="margin-top:8px"></div></div>
+  <div class="card"><b>Ausgaben nach Kategorie</b><div id="cats" style="margin-top:8px"></div></div>
 </section>
 
 <section id="t3" class="hide">
@@ -360,7 +360,7 @@ function exportCsv(){if(!DL)return;
 
 /* Einträge */
 function scrollToList(kk,r){setTimeout(function(){var e=$('lst-'+kk+'-'+r);if(!e)return;e.scrollIntoView({behavior:'smooth',block:'start'});e.style.transition='box-shadow .3s';e.style.boxShadow='0 0 0 2px var(--ac)';setTimeout(function(){e.style.boxShadow=''},1600)},60)}
-function rList(){var defs=[['in','rec','Einnahmen · wiederkehrend'],['in','once','Einnahmen · einmalig'],['out','rec','Ausgaben · wiederkehrend'],['out','once','Ausgaben · einmalig']];
+function rList(){var defs=[['in','once','Einnahmen · einmalig'],['out','once','Ausgaben · einmalig'],['in','rec','Einnahmen · wiederkehrend'],['out','rec','Ausgaben · wiederkehrend']];
  $('list').innerHTML=defs.map(function(d){var rows=S.items.map(function(x,i){return{x:x,i:i}}).filter(function(o){return o.x.k===d[0]&&o.x.r===d[1]}),tot=0;rows.forEach(function(o){tot+=o.x.a});
   return '<div class="card" id="lst-'+d[0]+'-'+d[1]+'"><div style="display:flex;justify-content:space-between"><b>'+d[2]+'</b><b class="'+(d[0]==='in'?'pos':'neg')+'">'+eur(tot)+'</b></div>'+(rows.map(function(o){var x=o.x;return '<div class="ev"><span>'+esc(x.n)+' <small style="color:var(--mut)">'+esc(meta(x))+'</small></span><span>'+eur(x.a)+' <button class="x" onclick="editItem('+o.i+')">✎</button><button class="x" onclick="delItem('+o.i+')">✕</button></span></div>'}).join('')||'<small style="color:var(--mut)">Keine Einträge.</small>')+'</div>'}).join('')}
 function saveItem(){var n=$('fn').value.trim(),a=parseFloat($('fa').value);if(!n||isNaN(a))return;
